@@ -1,0 +1,495 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muscle Build Tracker - 5 Day Workout Plan</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Helvetica Neue', sans-serif;
+            background: #f9f8f5;
+            color: #1a1a1a;
+            padding: 0;
+        }
+
+        .container {
+            max-width: 700px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        .header {
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: #1a1a1a;
+        }
+
+        .header p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .day-selector {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+        }
+
+        .day-btn {
+            padding: 0.75rem 1.25rem;
+            border: 0.5px solid #ddd;
+            background: #fff;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            white-space: nowrap;
+            transition: all 0.2s;
+            color: #666;
+        }
+
+        .day-btn:hover {
+            background: #f0f0f0;
+            border-color: #aaa;
+        }
+
+        .day-btn.active {
+            background: linear-gradient(135deg, #185FA5, #378ADD);
+            color: white;
+            border-color: #185FA5;
+        }
+
+        .workout-card {
+            background: #fff;
+            border: 0.5px solid #ddd;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .workout-day-title {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            color: #1a1a1a;
+        }
+
+        .exercise-item {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 0.5px solid #ddd;
+        }
+
+        .exercise-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .exercise-name {
+            font-weight: 600;
+            font-size: 15px;
+            margin-bottom: 0.75rem;
+            color: #1a1a1a;
+        }
+
+        .exercise-meta {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 1rem;
+        }
+
+        .set-input-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .input-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .input-wrapper label {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 0.3rem;
+            font-weight: 500;
+        }
+
+        .input-wrapper input {
+            padding: 0.5rem;
+            border: 0.5px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            background: #f9f8f5;
+            color: #1a1a1a;
+        }
+
+        .input-wrapper input:focus {
+            outline: none;
+            border-color: #378ADD;
+            background: #fff;
+        }
+
+        .log-btn {
+            background: linear-gradient(135deg, #185FA5, #378ADD);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.75rem 1.5rem;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        .log-btn:hover {
+            opacity: 0.9;
+        }
+
+        .log-btn:active {
+            transform: scale(0.98);
+        }
+
+        .set-logged {
+            background: rgba(31, 158, 117, 0.1);
+            border: 0.5px solid #1f9e75;
+            padding: 0.75rem;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #0f6e56;
+        }
+
+        .delete-btn {
+            cursor: pointer;
+            color: #a22a2a;
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        .delete-btn:hover {
+            color: #7a1a1a;
+        }
+
+        .stats-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 0.5px solid #ddd;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, rgba(24, 95, 165, 0.08), rgba(55, 138, 221, 0.08));
+            border: 0.5px solid #378ADD;
+            border-radius: 12px;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 28px;
+            font-weight: 600;
+            color: #185FA5;
+            margin-bottom: 0.25rem;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: #666;
+            font-weight: 500;
+        }
+
+        .motivation {
+            background: rgba(31, 158, 117, 0.1);
+            border: 0.5px solid #1f9e75;
+            border-radius: 8px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            font-size: 14px;
+            color: #0f6e56;
+            text-align: center;
+            line-height: 1.6;
+        }
+
+        .reset-btn {
+            background: #a22a2a;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-top: 1.5rem;
+            width: 100%;
+            transition: opacity 0.2s;
+        }
+
+        .reset-btn:hover {
+            opacity: 0.9;
+        }
+
+        @media (max-width: 480px) {
+            .set-input-group {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .log-btn {
+                grid-column: 1 / -1;
+            }
+
+            .header h1 {
+                font-size: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💪 Muscle Build Tracker</h1>
+            <p>Track your progress and build strength</p>
+        </div>
+
+        <div class="day-selector" id="daySelector"></div>
+
+        <div id="workoutContent"></div>
+
+        <div id="statsContent"></div>
+
+        <button class="reset-btn" onclick="tracker.resetAllData()">Reset All Data</button>
+    </div>
+
+    <script>
+        const workoutPlan = {
+            "Day 1": {
+                title: "Upper Body - Push Focus",
+                exercises: [
+                    { name: "Barbell Bench Press", sets: 3, reps: "6-8", desc: "Main lift" },
+                    { name: "Incline Dumbbell Press", sets: 3, reps: "8-10", desc: "Hits upper chest" },
+                    { name: "Shoulder Press", sets: 3, reps: "8-10", desc: "Barbell or dumbbell" },
+                    { name: "Lateral Raises", sets: 3, reps: "10-12", desc: "Shoulder definition" },
+                    { name: "Tricep Dips", sets: 3, reps: "8-10", desc: "Machine or assisted" },
+                    { name: "Tricep Pushdowns", sets: 2, reps: "10-12", desc: "Cable finisher" }
+                ]
+            },
+            "Day 2": {
+                title: "Lower Body",
+                exercises: [
+                    { name: "Barbell Back Squat", sets: 3, reps: "6-8", desc: "Or leg press" },
+                    { name: "Romanian Deadlifts", sets: 3, reps: "8-10", desc: "Hamstring focus" },
+                    { name: "Leg Press", sets: 3, reps: "8-10", desc: "Secondary quad" },
+                    { name: "Leg Curls", sets: 3, reps: "10-12", desc: "Isolate hamstrings" },
+                    { name: "Calf Raises", sets: 3, reps: "12-15", desc: "Build calf size" },
+                    { name: "Leg Extensions", sets: 2, reps: "12-15", desc: "Optional finisher" }
+                ]
+            },
+            "Day 3": {
+                title: "Upper Body - Pull Focus",
+                exercises: [
+                    { name: "Barbell Rows", sets: 3, reps: "6-8", desc: "Main back lift" },
+                    { name: "Assisted Pull-Ups", sets: 3, reps: "6-10", desc: "Back width & strength" },
+                    { name: "Bent-Over Rows", sets: 3, reps: "8-10", desc: "Secondary back" },
+                    { name: "Face Pulls", sets: 3, reps: "12-15", desc: "Rear delts" },
+                    { name: "Barbell Curls", sets: 3, reps: "8-10", desc: "Bicep strength" },
+                    { name: "Hammer Curls", sets: 2, reps: "10-12", desc: "Bicep volume" }
+                ]
+            },
+            "Day 4": {
+                title: "Lower Body - Variation",
+                exercises: [
+                    { name: "Deadlifts", sets: 3, reps: "5-6", desc: "Heavy compound" },
+                    { name: "Bulgarian Split Squats", sets: 3, reps: "8-10 per leg", desc: "Unilateral" },
+                    { name: "Leg Press", sets: 3, reps: "8-10", desc: "Volume for quads" },
+                    { name: "Leg Curls", sets: 3, reps: "10-12", desc: "Hamstring isolation" },
+                    { name: "Seated Calf Raises", sets: 3, reps: "12-15", desc: "Different angle" }
+                ]
+            },
+            "Day 5": {
+                title: "Full Body / Functional",
+                exercises: [
+                    { name: "Goblet Squats", sets: 3, reps: "10-12", desc: "Functional movement" },
+                    { name: "Push-Ups", sets: 3, reps: "10-15", desc: "Upper body endurance" },
+                    { name: "Dumbbell Rows", sets: 3, reps: "10-12", desc: "Back strength" },
+                    { name: "Planks or Ab Wheel", sets: 3, reps: "30-60 sec / 8-12", desc: "Core strength" },
+                    { name: "Dumbbell Step-Ups", sets: 3, reps: "10-12 per leg", desc: "Functional" },
+                    { name: "Light Cardio", sets: 1, reps: "10 min", desc: "Finisher" }
+                ]
+            }
+        };
+
+        class WorkoutTracker {
+            constructor() {
+                this.currentDay = "Day 1";
+                this.logs = JSON.parse(localStorage.getItem("workoutLogs")) || {};
+                this.init();
+            }
+
+            init() {
+                this.renderDaySelector();
+                this.renderWorkout();
+                this.renderStats();
+            }
+
+            renderDaySelector() {
+                const selector = document.getElementById("daySelector");
+                selector.innerHTML = Object.keys(workoutPlan).map(day => 
+                    `<button class="day-btn ${day === this.currentDay ? 'active' : ''}" onclick="tracker.selectDay('${day}')">${day}</button>`
+                ).join("");
+            }
+
+            selectDay(day) {
+                this.currentDay = day;
+                this.init();
+            }
+
+            renderWorkout() {
+                const workout = workoutPlan[this.currentDay];
+                const content = document.getElementById("workoutContent");
+
+                let html = `<div class="workout-card">
+                    <div class="workout-day-title">${this.currentDay}: ${workout.title}</div>`;
+
+                workout.exercises.forEach((ex, exIdx) => {
+                    const dayLogs = this.logs[this.currentDay] || {};
+                    const exLogs = dayLogs[exIdx] || [];
+
+                    html += `
+                        <div class="exercise-item">
+                            <div class="exercise-name">${ex.name}</div>
+                            <div class="exercise-meta">${ex.sets} × ${ex.reps} reps — ${ex.desc}</div>
+                            ${exLogs.map((log, logIdx) => `
+                                <div class="set-logged">
+                                    <span>Set ${logIdx + 1}: ${log.weight} lbs × ${log.reps} reps</span>
+                                    <span class="delete-btn" onclick="tracker.deleteLog('${this.currentDay}', ${exIdx}, ${logIdx})">✕</span>
+                                </div>
+                            `).join("")}
+                            <div class="set-input-group">
+                                <div class="input-wrapper">
+                                    <label>Weight (lbs)</label>
+                                    <input type="number" class="weight-${exIdx}" placeholder="0" />
+                                </div>
+                                <div class="input-wrapper">
+                                    <label>Reps</label>
+                                    <input type="number" class="reps-${exIdx}" placeholder="0" />
+                                </div>
+                                <div class="input-wrapper">
+                                    <label>&nbsp;</label>
+                                    <button class="log-btn" onclick="tracker.logSet('${this.currentDay}', ${exIdx})">Log Set</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `</div>`;
+                content.innerHTML = html;
+            }
+
+            logSet(day, exIdx) {
+                const weight = document.querySelector(`.weight-${exIdx}`).value;
+                const reps = document.querySelector(`.reps-${exIdx}`).value;
+
+                if (!weight || !reps) {
+                    alert("Please enter weight and reps");
+                    return;
+                }
+
+                if (!this.logs[day]) this.logs[day] = {};
+                if (!this.logs[day][exIdx]) this.logs[day][exIdx] = [];
+
+                this.logs[day][exIdx].push({ weight: parseInt(weight), reps: parseInt(reps) });
+                localStorage.setItem("workoutLogs", JSON.stringify(this.logs));
+
+                document.querySelector(`.weight-${exIdx}`).value = "";
+                document.querySelector(`.reps-${exIdx}`).value = "";
+
+                this.renderWorkout();
+                this.renderStats();
+            }
+
+            deleteLog(day, exIdx, logIdx) {
+                if (confirm("Delete this set?")) {
+                    this.logs[day][exIdx].splice(logIdx, 1);
+                    localStorage.setItem("workoutLogs", JSON.stringify(this.logs));
+                    this.renderWorkout();
+                    this.renderStats();
+                }
+            }
+
+            resetAllData() {
+                if (confirm("Are you sure? This will delete all logged workouts.")) {
+                    this.logs = {};
+                    localStorage.removeItem("workoutLogs");
+                    this.init();
+                }
+            }
+
+            renderStats() {
+                const stats = document.getElementById("statsContent");
+                
+                let totalSets = 0;
+                let daysCompleted = new Set();
+
+                Object.keys(this.logs).forEach(day => {
+                    Object.keys(this.logs[day]).forEach(exIdx => {
+                        totalSets += this.logs[day][exIdx].length;
+                    });
+                    if (Object.keys(this.logs[day]).length > 0) {
+                        daysCompleted.add(day);
+                    }
+                });
+
+                const motivation = [
+                    "Every rep brings you closer to your goals! 💪",
+                    "You're building the body and strength you want! 🔥",
+                    "Consistency is key. Keep crushing it! 🎯",
+                    "Rest and recovery matter just as much as training! 😴",
+                    "You've got this! Progress takes time and effort! ⚡",
+                    "Track your weights — progressive overload wins! 📈",
+                    "Small gains every week = big gains over months! 🚀"
+                ];
+
+                stats.innerHTML = `
+                    <div class="stats-section">
+                        <div class="stat-card">
+                            <div class="stat-number">${totalSets}</div>
+                            <div class="stat-label">Sets Logged</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">${daysCompleted.size}</div>
+                            <div class="stat-label">Days with Workouts</div>
+                        </div>
+                    </div>
+                    <div class="motivation">${motivation[Math.floor(Math.random() * motivation.length)]}</div>
+                `;
+            }
+        }
+
+        const tracker = new WorkoutTracker();
+    </script>
+</body>
+</html>
